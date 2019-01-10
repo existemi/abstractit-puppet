@@ -46,10 +46,19 @@ class puppet::agent {
     hour    => $::puppet::agent_cron_hour_interpolated,
   }
 
-  service { 'puppet':
-    ensure  => $service_enablement,
-    enable  => $service_enablement,
-    require => Class['puppet::config']
+  if $::lsbdistcodename == 'bionic' {
+    service { 'puppet':
+      ensure   => $service_enablement,
+      enable   => $service_enablement,
+      provider => 'systemd',
+      require  => Class['puppet::config']
+    }
+  } else {
+    service { 'puppet':
+      ensure   => $service_enablement,
+      enable   => $service_enablement,
+      require  => Class['puppet::config']
+    }
   }
 
   if $::osfamily =='Debian' {
